@@ -553,9 +553,11 @@ class qtype_ordering extends question_type {
         foreach($question->options->answers as $answer) {
             $output .= '    <answer fraction="'.$answer->fraction.'" '.$format->format($answer->answerformat).">\n";
             $output .= $format->writetext($answer->answer, 3);
+            $output .= $format->write_files($answer->answerfiles);
             if ($feedback = trim($answer->feedback)) { // usually there is no feedback
                 $output .= '      <feedback '.$format->format($answer->feedbackformat).">\n";
                 $output .= $format->writetext($answer->feedback, 4);
+                $output .= $format->write_files($answer->feedbackfiles);
                 $output .= "      </feedback>\n";
             }
             $output .= "    </answer>\n";
