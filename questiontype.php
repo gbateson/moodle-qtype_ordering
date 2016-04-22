@@ -616,15 +616,10 @@ class qtype_ordering extends question_type {
 
         $i = 0;
         while ($answer = $format->getpath($data, array('#', 'answer', $i), '')) {
-            if ($text = $format->getpath($answer, array('#', 'text', 0, '#'), '')) {
-                $newquestion->answer[] = $text;
-                $answerformat = $format->getpath($answer, array('@', 'format'), 'moodle_auto_format');
-                $newquestion->answerformat[] = $format->trans_format($answerformat);
-                $newquestion->fraction[] = 1; // will be reset later in save_question_options()
-                $newquestion->feedback[] = $format->getpath($answer, array('#', 'feedback', 0, '#', 'text', 0, '#'), '');
-                $feedbackformat = $format->getpath($answer, array('#', 'format', 0, '@', 'format'), 'moodle_auto_format');
-                $newquestion->feedbackformat[] = $format->trans_format($feedbackformat);
-            }
+            $ans = $format->import_answer($answer, true, $format->get_format($newquestion->questiontextformat));
+            $newquestion->answer[$i] = $ans->answer;
+            $newquestion->fraction[$i] = 1; // will be reset later in save_question_options()
+            $newquestion->feedback[$i] = $ans->feedback;
             $i++;
         }
 
