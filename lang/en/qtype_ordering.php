@@ -21,6 +21,7 @@ $string['allornothing'] = 'All or nothing';
 $string['answer'] = 'Item text';
 $string['answerheader'] = 'Draggable item {no}';
 $string['correctorder'] = 'The correct order for these items is as follows:';
+$string['defaultanswerformat'] = 'Default answer format';
 $string['defaultquestionname'] = 'Drag the following items into the correct order.';
 $string['gradedetails'] = 'Grade details';
 $string['gradingtype'] = 'Grading type';

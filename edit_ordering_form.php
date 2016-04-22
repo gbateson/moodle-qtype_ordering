@@ -198,6 +198,8 @@ class qtype_ordering_edit_form extends question_edit_form {
             $ids = array();
         }
 
+        $defaultanswerformat = get_config('qtype_ordering', 'defaultanswerformat');
+
         for ($i=0; $i<$repeats; $i++) {
 
             $editor = $name.'['.$i.']';
@@ -219,12 +221,12 @@ class qtype_ordering_edit_form extends question_edit_form {
 
                 // remove HTML editor, if necessary
                 if (optional_param($newname, 0, PARAM_RAW)) {
-                    $format = $this->reset_editor_format($editor);
+                    $format = $this->reset_editor_format($editor, FORMAT_MOODLE);
                     $_POST['answer'][$i]['format'] = $format; // overwrite incoming data
                 } else if ($id) {
                     $format = $this->question->options->answers[$id]->answerformat;
                 } else {
-                    $format = $this->reset_editor_format($editor);
+                    $format = $this->reset_editor_format($editor, $defaultanswerformat);
                 }
 
                 // check we have a submit button - it should always be there !!
@@ -267,6 +269,7 @@ class qtype_ordering_edit_form extends question_edit_form {
             $answerids = array_keys($question->options->answers);
         }
 
+        $defaultanswerformat = get_config('qtype_ordering', 'defaultanswerformat');
         $repeats = $this->get_answer_repeats($question);
         for ($i=0; $i<$repeats; $i++) {
 
@@ -274,7 +277,7 @@ class qtype_ordering_edit_form extends question_edit_form {
                 $answer = $question->options->answers[$answerid];
             } else {
                 $answer = (object)array('answer' => '',
-                                        'answerformat' => FORMAT_MOODLE);
+                                        'answerformat' => $defaultanswerformat);
                 $answerid = 0;
             }
 
