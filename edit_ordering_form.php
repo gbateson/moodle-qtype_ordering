@@ -44,10 +44,6 @@ class qtype_ordering_edit_form extends question_edit_form {
     const NUM_ANS_MIN     =  3;
     const NUM_ANS_ADD     =  3;
 
-    // this functionality is currently disabled
-    // because it is not fully functional
-    protected $use_editor_for_answers = true;
-
     /**
      * unique name for this question type
      */
@@ -113,13 +109,8 @@ class qtype_ordering_edit_form extends question_edit_form {
         $options[$name] = array('expanded' => true);
 
         $name = 'answer';
-        if (isset($this->question->id)) {
-            $elements[] = $mform->createElement('editor', $name, $label, $this->get_editor_attributes(), $this->get_editor_options());
-            $elements[] = $mform->createElement('submit', $name.'removeeditor', get_string('removeeditor', $plugin), array('onclick' => 'skipClientValidation = true;'));
-            //$elements[] = $mform->createElement('submit', $name.'removeitem', get_string('removeitem', $plugin));
-        } else {
-            $elements[] = $mform->createElement('textarea', $name, $label, $this->get_editor_attributes());
-        }
+        $elements[] = $mform->createElement('editor', $name, $label, $this->get_editor_attributes(), $this->get_editor_options());
+        $elements[] = $mform->createElement('submit', $name.'removeeditor', get_string('removeeditor', $plugin), array('onclick' => 'skipClientValidation = true;'));
         $options[$name] = array('type' => PARAM_RAW);
 
         $repeats = $this->get_answer_repeats($this->question);

@@ -150,17 +150,9 @@ class qtype_ordering extends question_type {
         foreach ($question->answer as $i => $answer) {
 
             // extract $answer fields
-            if (is_array($answer)) {
-                // editor
-                $answertext   = $answer['text'];
-                $answerformat = $answer['format'];
-                $answeritemid = $answer['itemid'];
-            } else {
-                // textarea
-                $answertext   = $answer;
-                $answerformat = FORMAT_MOODLE;
-                $answeritemid = 0; // i.e. no editor
-            }
+            $answertext   = $answer['text'];
+            $answerformat = $answer['format'];
+            $answeritemid = $answer['itemid'];
 
             // reduce simple <p>...</p> to plain text
             if (substr_count($answertext, '<p>')==1) {
