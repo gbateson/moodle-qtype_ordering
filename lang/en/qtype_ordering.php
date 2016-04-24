@@ -15,6 +15,9 @@ $string['pluginnameadding'] = 'Adding an Ordering question';
 $string['pluginnameediting'] = 'Editing an Ordering question';
 $string['pluginnamesummary'] = 'Put jumbled items into a meaningful order.';
 
+$string['editingordering'] = 'Editing ordering question';
+$string['addingordering'] = 'Adding a Ordering question';
+
 $string['absoluteposition'] = 'Absolute position';
 $string['addmoreanswers'] = 'Add {$a} more items';
 $string['allornothing'] = 'All or nothing';
