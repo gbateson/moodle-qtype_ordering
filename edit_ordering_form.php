@@ -125,10 +125,10 @@ class qtype_ordering_edit_form extends question_edit_form {
         $this->adjust_html_editors($mform, $name, $repeats);
 
         // feedback
-        $this->add_ordering_feedback_fields(true);
+        $this->add_ordering_feedback_fields(false);
 
         // interactive
-        $this->add_ordering_interactive_settings(true, true);
+        $this->add_ordering_interactive_settings(false, false);
     }
 
     protected function get_answer_repeats($question) {
