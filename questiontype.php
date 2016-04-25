@@ -542,6 +542,7 @@ class qtype_ordering extends question_type {
         $output .= "    <selecttype>$selecttype</selecttype>\n";
         $output .= "    <selectcount>$selectcount</selectcount>\n";
         $output .= "    <gradingtype>$gradingtype</gradingtype>\n";
+        $output .= $format->write_combined_feedback($question->options, $question->id, $question->contextid);
 
         foreach($question->options->answers as $answer) {
             $output .= '    <answer fraction="'.$answer->fraction.'" '.$format->format($answer->answerformat).">\n";
@@ -616,8 +617,11 @@ class qtype_ordering extends question_type {
             $i++;
         }
 
+        $format->import_combined_feedback($newquestion, $data, false);
         // check that the required feedback fields exist
         $this->check_ordering_combined_feedback($newquestion);
+
+        $format->import_hints($newquestion, $data, false);
 
         return $newquestion;
     }
