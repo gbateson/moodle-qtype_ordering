@@ -249,6 +249,7 @@ class qtype_ordering_edit_form extends question_edit_form {
 
         // feedback
         $question = $this->data_preprocessing_ordering_feedback($question);
+        $question = $this->data_preprocessing_hints($question, false, false);
 
         // answers and fractions
         $question->answer     = array();

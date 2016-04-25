@@ -210,6 +210,7 @@ class qtype_ordering extends question_type {
             'gradingtype' => $question->gradingtype
         );
         $options = $this->save_ordering_feedback_helper($options, $question, $context, true);
+        $this->save_hints($question, false);
 
         // add/update $options for this ordering question
         if ($options->id = $DB->get_field('qtype_ordering_options', 'id', array('questionid' => $question->id))) {
@@ -310,7 +311,7 @@ class qtype_ordering extends question_type {
             return false;
         }
 
-        //parent::get_question_options($question);
+        parent::get_question_options($question);
         return true;
     }
 
