@@ -152,7 +152,11 @@ class qtype_ordering extends question_type {
             // extract $answer fields
             $answertext   = $answer['text'];
             $answerformat = $answer['format'];
-            $answeritemid = $answer['itemid'];
+            if (!empty($answer['itemid'])) {
+                $answeritemid = $answer['itemid'];
+            } else {
+                $answeritemid = null;
+            }
 
             // reduce simple <p>...</p> to plain text
             if (substr_count($answertext, '<p>')==1) {
