@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,20 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information for the ORDERING question type
+ * ORDERING question settings page.
  *
  * @package    qtype
  * @subpackage ordering
- * @copyright  2010 Thomas Robb
+ * @copyright  2016 Vadim Dvorovenko
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// prevent direct access to this script
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
-$plugin->cron      = 0;
-$plugin->component = 'qtype_ordering';
-$plugin->maturity  = MATURITY_STABLE;
-$plugin->requires  = 2010112400; // Moodle 2.0
-$plugin->version   = 2016042350;
-$plugin->release   = '2016-04-23 (50)';
+if ($ADMIN->fulltree) {
+    $settings->add(new admin_setting_configselect('qtype_ordering/defaultanswerformat',
+            get_string('defaultanswerformat', 'qtype_ordering'), '', FORMAT_MOODLE, format_text_menu()));
+}
