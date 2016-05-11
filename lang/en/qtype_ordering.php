@@ -1,11 +1,25 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
- * The language strings for the QTYPENAME question type.
+ * Ordering question type language srings
  *
- * @copyright &copy; 2006 YOURNAME
- * @author YOUREMAILADDRESS
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package YOURPACKAGENAME
+ * @package    qtype_ordering
+ * @copyright  2013 Gordon Bateson (gordon.bateson@gmail.com)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 $string['pluginname'] = 'Ordering';
@@ -76,9 +90,3 @@ $string['selectrandom'] = 'Select a random subset of items';
 $string['selecttype_help'] = 'Choose whether to display all the items or a subset of the items.';
 $string['selecttype'] = 'Item selection type';
 $string['vertical'] = 'Vertical';
-
-// requred strings for Moodle 2.0
-$string['ordering'] = 'Ordering';
-$string['ordering_help'] = 'Several items are displayed in a jumbled order. The items can be dragged into a meaningful order.';
-$string['ordering_link'] = 'question/type/ordering';
-$string['orderingsummary'] = 'Put jumbled items into a meaningful order.';

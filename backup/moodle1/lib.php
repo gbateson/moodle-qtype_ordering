@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,21 +15,28 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    qtype
- * @subpackage ordering
- * @copyright  2011 David Mudrak <david@moodle.com>
+ * Ordering question type conversion handler
+ *
+ * @package    qtype_ordering
+ * @copyright  2013 Gordon Bateson (gordon.bateson@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * True/false question type conversion handler
+ * Ordering question type conversion handler class
+ *
+ * @copyright  2013 Gordon Bateson (gordon.bateson@gmail.com)
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class moodle1_qtype_ordering_handler extends moodle1_qtype_handler {
 
     /**
-     * @return array
+     * Returns the list of paths within one <QUESTION> that this qtype needs to have included
+     * in the grouped question structure
+     *
+     * @return array of strings
      */
     public function get_question_subpaths() {
         return array(
@@ -40,16 +46,19 @@ class moodle1_qtype_ordering_handler extends moodle1_qtype_handler {
     }
 
     /**
-     * Appends the ordering specific information to the question
+     * Gives the qtype handler a chance to write converted data into questions.xml
+     *
+     * @param array $data grouped question data
+     * @param array $raw grouped raw QUESTION data
      */
     public function process_question(array $data, array $raw) {
 
-        // convert and write the answers first
+        // Convert and write the answers first.
         if (isset($data['answers'])) {
             $this->write_answers($data['answers'], $this->pluginname);
         }
 
-        // convert and write the ordering extra fields
+        // Convert and write the ordering extra fields.
         foreach ($data['ordering'] as $ordering) {
             $ordering['id'] = $this->converter->get_nextid();
             $this->write_xml('ordering', $ordering, array('/ordering/id'));

@@ -15,21 +15,27 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Serve question type files
+ * Ordering question type general functions
  *
- * @since      2.0
- * @package    qtype
- * @subpackage ordering
- * @copyright  Dongsheng Cai <dongsheng@moodle.com>
+ * @package    qtype_ordering
+ * @copyright  2013 Gordon Bateson (gordon.bateson@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Checks file access for multiple choice questions.
+ * Checks file access for ordering questions.
+ *
+ * @param stdClass $course course object
+ * @param stdClass $cm course module object
+ * @param stdClass $context context object
+ * @param string $filearea file area
+ * @param array $args extra arguments
+ * @param bool $forcedownload whether or not force download
+ * @param array $options additional options affecting the file serving
  */
-function qtype_ordering_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
+function qtype_ordering_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
     global $CFG;
     require_once($CFG->dirroot.'/lib/questionlib.php');
     question_pluginfile($course, $context, 'qtype_ordering', $filearea, $args, $forcedownload);

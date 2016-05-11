@@ -15,19 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    moodlecore
- * @subpackage backup-moodle2
- * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * Ordering question type restore handler
+ *
+ * @package    qtype_ordering
+ * @copyright  2013 Gordon Bateson (gordon.bateson@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * restore plugin class that provides the necessary information
- * needed to restore one ordering qtype plugin
+ * Restore plugin class that provides the necessary information needed to restore one ordering qtype plugin
  *
- * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
+ * @copyright  2013 Gordon Bateson (gordon.bateson@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class restore_qtype_ordering_plugin extends restore_qtype_plugin {
@@ -39,19 +39,21 @@ class restore_qtype_ordering_plugin extends restore_qtype_plugin {
 
         $paths = array();
 
-        // This qtype uses question_answers, add them
+        // This qtype uses question_answers, add them.
         $this->add_question_question_answers($paths);
 
-        // Add own qtype stuff
+        // Add own qtype stuff.
         $elename = 'ordering';
-        $elepath = $this->get_pathfor('/ordering'); // we used get_recommended_name() so this works
+        $elepath = $this->get_pathfor('/ordering'); // We used get_recommended_name() so this works.
         $paths[] = new restore_path_element($elename, $elepath);
 
-        return $paths; // And we return the interesting paths
+        return $paths; // And we return the interesting paths.
     }
 
     /**
      * Process the qtype/ordering element
+     *
+     * @param array $data
      */
     public function process_ordering($data) {
         global $DB;
@@ -60,13 +62,13 @@ class restore_qtype_ordering_plugin extends restore_qtype_plugin {
         $oldid = $data->id;
 
         // Detect if the question is created or mapped
-        // "question" is the XML tag name, not the DB field name
+        // "question" is the XML tag name, not the DB field name.
         $oldquestionid   = $this->get_old_parentid('question');
         $newquestionid   = $this->get_new_parentid('question');
 
         // If the question has been created by restore,
         // we need to create a "qtype_ordering_options" record
-        // and create a mapping from the $oldid to the $newid
+        // and create a mapping from the $oldid to the $newid.
         if ($this->get_mappingid('question_created', $oldquestionid)) {
             $data->questionid = $newquestionid;
             $newid = $DB->insert_record('qtype_ordering_options', $data);
@@ -76,9 +78,10 @@ class restore_qtype_ordering_plugin extends restore_qtype_plugin {
 
     /**
      * Given one question_states record, return the answer
-     * recoded pointing to all the restored stuff for ordering questions
+     * recoded pointing to all the restored stuff for ordering questions.
+     * If not empty, answer is one question_answers->id.
      *
-     * if not empty, answer is one question_answers->id
+     * @param object $state
      */
     public function recode_legacy_state_answer($state) {
         $answer = $state->answer;
