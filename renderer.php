@@ -56,7 +56,7 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
      * @return string HTML fragment.
      */
     public function formulation_and_controls(question_attempt $qa, question_display_options $options) {
-        global $CFG, $DB;
+        global $PAGE;
 
         $question = $qa->get_question();
         $response = $qa->get_last_qt_data();
@@ -88,45 +88,16 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
 
         $result = '';
 
-        if ($options->readonly) {
-            // Items cannot be dragged in readonly mode.
-        } else {
-            $script = "\n";
-            $script .= "//<![CDATA[\n";
-            $script .= "if (window.$) {\n";
-            $script .= "    $(function(){\n";
-            $script .= "        $('#$sortableid').sortable({\n";
-            $script .= "            axis: '$axis',\n";
-            $script .= "            containment: '#$ablockid',\n";
-            $script .= "            opacity: 0.6,\n";
-            $script .= "            update: function(event, ui){\n";
-            $script .= "                if (typeof($(this).sortable)=='function') {\n";
-            $script .= "                    var ItemsOrder = $(this).sortable('toArray');\n";
-            $script .= "                } else {\n";
-            $script .= "                    // fix for Moodle 3.4, in which 'sortable' method disappears !!\n";
-            $script .= "                    var ItemsOrder = [];\n";
-            $script .= "                    $(this).children('li.sortableitem').each(function(){\n";
-            $script .= "                        ItemsOrder.push($(this).prop('id'));\n";
-            $script .= "                    });\n";
-            $script .= "                }\n";
-            $script .= "                $('#$responseid').val(ItemsOrder.toString());\n";
-            $script .= "            }\n";
-            $script .= "        });\n";
-            $script .= "        $('#$sortableid').disableSelection();\n";
-            $script .= "    });\n";
-            $script .= "    $(document).ready(function(){\n";
-            $script .= "        var ItemsOrder = $('#$sortableid').sortable('toArray');\n";
-            $script .= "        $('#$responseid').val(ItemsOrder).toString();\n";
-            $script .= "    });\n";
-            $script .= "}\n";
-            $script .= "//]]>\n";
-            $result .= html_writer::tag('script', $script, array('type' => 'text/javascript'));
+        if (!$options->readonly) {
+            $PAGE->requires->js_call_amd('qtype_ordering/ordering', 'init', [$sortableid, $responseid, $ablockid, $axis]);
         }
 
         $result .= html_writer::tag('div', $question->format_questiontext($qa), array('class' => 'qtext'));
 
         $printeditems = false;
         if (count($currentresponse)) {
+
+            $hashanswer = array();
 
             // Set layout class.
             $layoutclass = $question->get_ordering_layoutclass();
@@ -179,6 +150,8 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
                 // Therefore we use the $answer's md5key for the "id".
                 $params = array('class' => $class, 'id' => $answer->md5key);
                 $result .= html_writer::tag('li', $img.$answertext, $params);
+
+                $hashanswer[] =  $question->answers[$answerid]->md5key;
             }
         }
 
@@ -190,7 +163,7 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
             $result .= html_writer::empty_tag('input', array('type'  => 'hidden',
                                                              'name'  => $responsename,
                                                              'id'    => $responseid,
-                                                             'value' => ''));
+                                                             'value' => implode(',', $hashanswer)));
         }
 
         return $result;
