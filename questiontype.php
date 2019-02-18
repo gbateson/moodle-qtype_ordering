@@ -830,12 +830,3 @@ class qtype_ordering extends question_type {
         $question->showgrading = $showgrading;
     }
 }
-
-if (function_exists('question_register_questiontype')) { // Moodle 2.0
-    class qtype_ordering_options_qtype extends qtype_ordering {
-        function name() {
-            return 'ordering';
-        }
-    }
-    question_register_questiontype(new qtype_ordering_options_qtype());
-}
