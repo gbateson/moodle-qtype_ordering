@@ -838,11 +838,11 @@ class qtype_ordering_question extends question_graded_automatically {
     public static function get_numbering_styles($style=null) {
         $plugin = 'qtype_ordering';
         $styles = array('none' => get_string('numberingstylenone', $plugin),
-                        'abc'  => get_string('numberingstyleabc',  $plugin),
-                        'ABC'  => get_string('numberingstyleABC',  $plugin),
+                        'abc'  => get_string('numberingstyleabcl', $plugin),
+                        'ABC'  => get_string('numberingstyleABCU', $plugin),
                         '123'  => get_string('numberingstyle123',  $plugin),
-                        'iii'  => get_string('numberingstyleiii',  $plugin),
-                        'III'  => get_string('numberingstyleIII',  $plugin));
+                        'iii'  => get_string('numberingstyleiiil', $plugin),
+                        'III'  => get_string('numberingstyleIIIU', $plugin));
         return self::get_types($styles, $style);
     }
 }

@@ -82,10 +82,10 @@ $string['notenoughanswers'] = 'Ordering questions must have more than {$a} answe
 $string['numberingstyle'] = 'Number the choices?';
 $string['numberingstylenone'] = 'No numbering';
 $string['numberingstyle123'] = '1., 2., 3., ...';
-$string['numberingstyleabc'] = 'a., b., c., ...';
-$string['numberingstyleABC'] = 'A., B., C., ...';
-$string['numberingstyleiii'] = 'i., ii., iii., ...';
-$string['numberingstyleIII'] = 'I., II., III., ...';
+$string['numberingstyleabcl'] = 'a., b., c., ...';
+$string['numberingstyleABCU'] = 'A., B., C., ...';
+$string['numberingstyleiiil'] = 'i., ii., iii., ...';
+$string['numberingstyleIIIU'] = 'I., II., III., ...';
 $string['numberingstyle_desc'] = 'The default numbering style.';
 $string['numberingstyle_help'] = 'Choose the numbering style for draggable items in this question.';
 
