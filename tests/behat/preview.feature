@@ -26,7 +26,7 @@ Feature: Preview an Ordering question
 
   @javascript @_switch_window
   Scenario: Preview an Ordering question and submit a correct response.
-    When I click on "Preview" "link" in the "ordering-001" "table_row"
+    When I choose "Preview" action for "ordering-001" in the question bank
     And I switch to "questionpreview" window
     And I set the field "How questions behave" to "Immediate feedback"
     And I press "Start again with these options"
