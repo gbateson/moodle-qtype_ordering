@@ -65,6 +65,14 @@
 .que.ordering .sortablelist.horizontal li {
     float            : left;
 }
+
+/* Better define 'row' of item for horizontal list. */
+.que.ordering .sortablelist.horizontal {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+}
+
 .que.ordering .sortablelist.vertical li {
     min-height       : 18px;
 }
