@@ -40,33 +40,62 @@ $string['editingordering'] = 'Editing ordering question';
 $string['gradedetails'] = 'Grade details';
 $string['gradingtype'] = 'Grading type';
 $string['gradingtype_help'] = 'Choose the type of grading calculation.
-
-**All or nothing**
-: If all items are in the correct position, then full marks are awarded. Otherwise, the score is zero.
-
-**Absolute position**
-: An item is considered correct if it is in the same position as in the correct answer. The highest possible score for the question is **the same as** the number of items displayed to the student.
-
-**Relative to correct position**
-: An item is considered correct if it is in the same position as in the correct answer. Correct items receive a score equal to the number of items displayed minus one. Incorrect items receive a score equal to the number of items displayed minus one and minus the distance of the item from its correct position. Thus, if ***n*** items are displayed to the student, the number of marks available for each item is ***(n - 1)***, and the highest mark available for the question is ***n x (n - 1)***, which is the same as ***(n² - n)***.
-
-**Relative to the next item (excluding last)**
-: An item is considered correct if it is followed by the same item as it is in the correct answer. The item in the last position is not checked. Thus, the highest possible score for the question is **one less than** the number of items displayed to the student.
-
-**Relative to the next item (including last)**
-: An item is considered correct if it is followed by the same item as it is in the correct answer. This includes the last item which must have no item following it. Thus, the highest possible score for the question is **the same as** the number of items displayed to the student.
-
-**Relative to both the previous and next items**
-: An item is considered correct if both the previous and next items are the same as they are in the correct answer. The first item should have no previous item, and the last item should have no next item. Thus, there are two possible points for each item, and the highest possible score for the question is **twice** the number of items displayed to the student.
-
-**Relative to ALL previous and next items**
-: An item is considered correct if it is preceded by all the same items as it is in the correct answer, and it is followed by all the same items as it is in the correct answer. The order of the previous items does not matter, and nor does the order of the following items. Thus, if ***n*** items are displayed to the student, the number of marks available for each item is ***(n - 1)***, and the highest mark available for the question is ***n x (n - 1)***, which is the same as ***(n² - n)***.
-
-**Longest ordered subset**
-: The grade is the number of items in the longest ordered subset of items. The highest possible grade is the same as the number of items displayed. A subset must have at least two items. Subsets do not need to start at the first item (but they can) and they do not need to be contiguous (but they can be). Where there are multiple subsets of equal length, items in the subset that is found first, when searching from left to right, will be displayed as correct. Other items will be marked as incorrect.
-
-**Longest contiguous subset**
-: The grade is the number of items in the longest contiguous subset of items. The highest possible grade is the same as the number of items displayed. A subset must have at least two items. Subsets do not need to start at the first item (but they can) and they MUST BE CONTIGUOUS. Where there are multiple subsets of equal length, items in the subset that is found first, when searching from left to right, will be displayed as correct. Other items will be marked as incorrect.';
+<br/>
+<strong>All or nothing</strong>
+<br/>
+If all items are in the correct position, then full marks are awarded. Otherwise, the score is zero.
+<br/>
+<strong>Absolute position</strong>
+<br/>
+An item is considered correct if it is in the same position as in the correct answer. The highest possible score for the question is
+<strong>the same as</strong> the number of items displayed to the student.
+<br/>
+<strong>Relative to correct position</strong>
+<br/>
+An item is considered correct if it is in the same position as in the correct answer. Correct items receive a score equal to the
+number of items displayed minus one. Incorrect items receive a score equal to the number of items displayed minus one and minus the
+distance of the item from its correct position. Thus, if <strong><i>n</i></strong> items are displayed to the student, the number of
+marks available for each item is <strong></i>(n - 1)</i></strong>, and the highest mark available for the question is
+<strong><i>n x (n - 1)</i></strong>, which is the same as <strong><i>(n² - n)</i></strong>.
+<br/>
+<strong>Relative to the next item (excluding last)</strong>
+<br/>
+An item is considered correct if it is followed by the same item as it is in the correct answer. The item in the last position is
+not checked. Thus, the highest possible score for the question is <strong>one less than</strong> the number of items displayed to
+the student.
+<br/>
+<strong>Relative to the next item (including last)</strong>
+<br/>
+An item is considered correct if it is followed by the same item as it is in the correct answer. This includes the last item which
+must have no item following it. Thus, the highest possible score for the question is <strong>the same as</strong> the number of
+items displayed to the student.
+<br/>
+<strong>Relative to both the previous and next items</strong>
+<br/>
+An item is considered correct if both the previous and next items are the same as they are in the correct answer. The first item
+should have no previous item, and the last item should have no next item. Thus, there are two possible points for each item, and the
+highest possible score for the question is <strong>twice</strong> the number of items displayed to the student.
+<br/>
+<strong>Relative to ALL previous and next items</strong>
+<br/>
+An item is considered correct if it is preceded by all the same items as it is in the correct answer, and it is followed by all the
+same items as it is in the correct answer. The order of the previous items does not matter, and nor does the order of the following
+items. Thus, if <strong><i>n</strong></i> items are displayed to the student, the number of marks available for each item is
+<strong><i>(n - 1)</strong></i>, and the highest mark available for the question is <strong></i>n x (n - 1)</i></strong>, which is
+the same as <strong></i>(n² - n)</i></strong>.
+<strong>Longest ordered subset</strong>
+<br/>
+The grade is the number of items in the longest ordered subset of items. The highest possible grade is the same as the number of
+items displayed. A subset must have at least two items. Subsets do not need to start at the first item (but they can) and they do
+not need to be contiguous (but they can be). Where there are multiple subsets of equal length, items in the subset that are found
+first, when searching from left to right, will be displayed as correct. Other items will be marked as incorrect.
+<br/>
+<strong>Longest contiguous subset</strong>
+<br/>
+The grade is the number of items in the longest contiguous subset of items. The highest possible grade is the same as the number of
+items displayed. A subset must have at least two items. Subsets do not need to start at the first item (but they can) and they MUST
+BE CONTIGUOUS. Where there are multiple subsets of equal length, items in the subset that are found first, when searching from left
+to right, will be displayed as correct. Other items will be marked as incorrect.';
 
 $string['horizontal'] = 'Horizontal';
 
