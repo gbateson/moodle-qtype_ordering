@@ -418,8 +418,8 @@ class qtype_ordering_edit_form extends question_edit_form {
      * @param string|mixed|null $default Default value (optional, default = null)
      * @return string|mixed|null Default value for field with this $name
      */
-    protected function get_default_value($name, $default=null) {
-        return get_user_preferences("qtype_ordering_$name", $default);
+    protected function get_default_value(string $name, $default): ?string {
+        return get_user_preferences($this->plugin_name() . '_' . $name, $default ?? '0');
     }
 
     /**
