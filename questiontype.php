@@ -22,6 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use qtype_ordering\question_hint_ordering;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -31,6 +33,9 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_ordering extends question_type {
+
+    /** @var int Number of hints default. */
+    const DEFAULT_NUM_HINTS = 2;
 
     /** @var array Combined feedback fields */
     public $feedbackfields = array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback');
@@ -64,7 +69,7 @@ class qtype_ordering extends question_type {
      */
     protected function initialise_question_instance(question_definition $question, $questiondata) {
         parent::initialise_question_instance($question, $questiondata);
-        $this->initialise_combined_feedback($question, $questiondata);
+        $this->initialise_combined_feedback($question, $questiondata, true);
     }
 
     /**
@@ -191,7 +196,7 @@ class qtype_ordering extends question_type {
             'numberingstyle' => $question->numberingstyle
         );
         $options = $this->save_combined_feedback_helper($options, $question, $context, true);
-        $this->save_hints($question, false);
+        $this->save_hints($question, true);
 
         // Add/update $options for this ordering question.
         if ($options->id = $DB->get_field('qtype_ordering_options', 'id', array('questionid' => $question->id))) {
@@ -217,6 +222,106 @@ class qtype_ordering extends question_type {
         }
 
         return true;
+    }
+
+    /**
+     * Count number of hints on the form.
+     *
+     * @param object $formdata The data from the form.
+     * @param bool $withparts Whether to take into account clearwrong and shownumcorrect options.
+     * @return int Count of hints on the form.
+     */
+    protected function count_hints_on_form($formdata, $withparts) {
+        if (!empty($formdata->hint)) {
+            $numhints = max(array_keys($formdata->hint)) + 1;
+        } else {
+            $numhints = 0;
+        }
+
+        if ($withparts) {
+            if (!empty($formdata->hintclearwrong)) {
+                $numclears = max(array_keys($formdata->hintclearwrong)) + 1;
+            } else {
+                $numclears = 0;
+            }
+            if (!empty($formdata->hintshownumcorrect)) {
+                $numshows = max(array_keys($formdata->hintshownumcorrect)) + 1;
+            } else {
+                $numshows = 0;
+            }
+            if (!empty($formdata->hintoptions)) {
+                $numhighlights = max(array_keys($formdata->hintoptions)) + 1;
+            } else {
+                $numhighlights = 0;
+            }
+
+            $numhints = max($numhints, $numclears, $numshows, $numhighlights);
+        }
+        return $numhints;
+    }
+
+    /**
+     * Save hints from the form. Overwrite save_hints function to custom hint controls.
+     *
+     * @param object $formdata The data from the form.
+     * @param bool $withparts Whether to take into account clearwrong, shownumcorrect, and highlightresponse options.
+     */
+    public function save_hints($formdata, $withparts = false) {
+        global $DB;
+        $context = $formdata->context;
+
+        $oldhints = $DB->get_records('question_hints',
+            array('questionid' => $formdata->id), 'id ASC');
+
+        $numhints = $this->count_hints_on_form($formdata, $withparts);
+
+        for ($i = 0; $i < $numhints; $i += 1) {
+            if (html_is_blank($formdata->hint[$i]['text'])) {
+                $formdata->hint[$i]['text'] = '';
+            }
+
+            if ($withparts) {
+                $clearwrong = !empty($formdata->hintclearwrong[$i]);
+                $shownumcorrect = !empty($formdata->hintshownumcorrect[$i]);
+                $highlightresponse = !empty($formdata->hintoptions[$i]);
+            }
+
+            // Update an existing hint if possible.
+            $hint = array_shift($oldhints);
+            if (!$hint) {
+                $hint = new stdClass();
+                $hint->questionid = $formdata->id;
+                $hint->hint = '';
+                $hint->id = $DB->insert_record('question_hints', $hint);
+            }
+
+            $hint->hint = $this->import_or_save_files($formdata->hint[$i],
+                $context, 'question', 'hint', $hint->id);
+            $hint->hintformat = $formdata->hint[$i]['format'];
+            if ($withparts) {
+                $hint->clearwrong = $clearwrong;
+                $hint->shownumcorrect = $shownumcorrect;
+                $hint->options = $highlightresponse;
+            }
+            $DB->update_record('question_hints', $hint);
+        }
+
+        // Delete any remaining old hints.
+        $fs = get_file_storage();
+        foreach ($oldhints as $oldhint) {
+            $fs->delete_area_files($context->id, 'question', 'hint', $oldhint->id);
+            $DB->delete_records('question_hints', array('id' => $oldhint->id));
+        }
+    }
+
+    /**
+     * Create a question_hint, or an appropriate subclass for this question, from a row loaded from the database.
+     *
+     * @param object $hint The DB row from the question hints table.
+     * @return question_hint_ordering Hints of question from record.
+     */
+    protected function make_hint($hint) {
+        return question_hint_ordering::load_from_record($hint);
     }
 
     /**
@@ -317,6 +422,31 @@ class qtype_ordering extends question_type {
                 array('question' => $question->id), 'fraction ASC')) {
             echo $OUTPUT->notification('Error: Missing question answers for ordering question ' . $question->id . '!');
             return false;
+        }
+
+        // Initialize the shownumcorrect and highlight options with the old question when restoring.
+        $hints = $DB->get_records('question_hints', ['questionid' => $question->id], 'id ASC');
+        $counthints = count($hints);
+        for ($i = 0; $i < max(self::DEFAULT_NUM_HINTS, $counthints); $i++) {
+            $hint = array_shift($hints);
+            if (!$hint) {
+                $hint = new stdClass();
+                $hint->questionid = $question->id;
+                $hint->hint = '';
+                $hint->hintformat = 1;
+                $hint->clearwrong = 0;
+                $hint->options = 1;
+                $hint->shownumcorrect = 1;
+                $hint->id = $DB->insert_record('question_hints', $hint);
+            }
+
+            if (isset($hint->shownumcorrect) || isset($hint->options)) {
+                continue;
+            }
+
+            $hint->options = 1;
+            $hint->shownumcorrect = 1;
+            $DB->update_record('question_hints', $hint);
         }
 
         parent::get_question_options($question);
@@ -648,6 +778,12 @@ class qtype_ordering extends question_type {
         $output .= "    <numberingstyle>$numberingstyle</numberingstyle>\n";
         $output .= $format->write_combined_feedback($question->options, $question->id, $question->contextid);
 
+        $shownumcorrect = $question->options->shownumcorrect;
+        if (!empty($question->options->shownumcorrect)) {
+            $output = str_replace("    <shownumcorrect/>\n", "", $output);
+        }
+        $output .= "    <shownumcorrect>$shownumcorrect</shownumcorrect>\n";
+
         foreach ($question->options->answers as $answer) {
             $output .= '    <answer fraction="'.$answer->fraction.'" '.$format->format($answer->answerformat).">\n";
             $output .= $format->writetext($answer->answer, 3);
@@ -725,10 +861,28 @@ class qtype_ordering extends question_type {
         }
 
         $format->import_combined_feedback($newquestion, $data, false);
+        $newquestion->shownumcorrect = $format->getpath($data, ['#', 'shownumcorrect', 0, '#'], null);
         // Check that the required feedback fields exist.
         $this->check_ordering_combined_feedback($newquestion);
 
-        $format->import_hints($newquestion, $data, false);
+        $format->import_hints($newquestion, $data, true, true);
+
+        if (!isset($newquestion->shownumcorrect)) {
+            $newquestion->shownumcorrect = 1;
+            $counthintshownumcorrect = self::DEFAULT_NUM_HINTS;
+            $counthintoptions = self::DEFAULT_NUM_HINTS;
+
+            if (isset($newquestion->hintshownumcorrect)) {
+                $counthintshownumcorrect = max(self::DEFAULT_NUM_HINTS, count($newquestion->hintshownumcorrect));
+            }
+
+            if (isset($newquestion->hintoptions)) {
+                $counthintoptions = max(self::DEFAULT_NUM_HINTS, count($newquestion->hintoptions));
+            }
+
+            $newquestion->hintshownumcorrect  = array_fill(0, $counthintshownumcorrect, 1);
+            $newquestion->hintoptions  = array_fill(0, $counthintoptions, 1);
+        }
 
         return $newquestion;
     }

@@ -42,3 +42,39 @@ Feature: Preview an Ordering question
     Then the state of "Put these words in order." question is shown as "Correct"
     And I should see "Mark 1.00 out of 1.00"
     And I switch to the main window
+
+  @javascript @_switch_window
+  Scenario: Preview an Ordering question with show number of correct option.
+    When I choose "Preview" action for "ordering-002" in the question bank
+    And I switch to "questionpreview" window
+    And I set the field "How questions behave" to "Immediate feedback"
+    And I press "Start again with these options"
+    And I drag "Modular" to space "1" in the ordering question
+    And I drag "Object" to space "6" in the ordering question
+    And I drag "Oriented" to space "4" in the ordering question
+    And I drag "Dynamic" to space "3" in the ordering question
+    And I drag "Learning" to space "5" in the ordering question
+    And I drag "Environment" to space "2" in the ordering question
+    And I press "Submit and finish"
+    And I should see "You have 1 item correct."
+    And I should see "You have 5 items partially correct."
+
+  @javascript @_switch_window
+  Scenario: Preview an Ordering question with no show number of correct option.
+    When I choose "Edit question" action for "ordering-002" in the question bank
+    And I set the following fields to these values:
+      | id_shownumcorrect       | 0 |
+    And I press "id_submitbutton"
+    And I choose "Preview" action for "ordering-002" in the question bank
+    And I switch to "questionpreview" window
+    And I set the field "How questions behave" to "Immediate feedback"
+    And I press "Start again with these options"
+    And I drag "Modular" to space "1" in the ordering question
+    And I drag "Object" to space "6" in the ordering question
+    And I drag "Oriented" to space "4" in the ordering question
+    And I drag "Dynamic" to space "3" in the ordering question
+    And I drag "Learning" to space "5" in the ordering question
+    And I drag "Environment" to space "2" in the ordering question
+    And I press "Submit and finish"
+    And I should not see "You have 1 item correct."
+    And I should not see "You have 5 items partially correct."

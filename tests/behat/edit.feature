@@ -32,9 +32,21 @@ Feature: Test editing an Ordering question
     And I press "id_submitbutton"
     Then I should see "You must supply a value here."
     When I set the following fields to these values:
-      | Question name | Edited Ordering |
+      | Question name         | Edited Ordering |
+      | hintoptions[0]        | 1               |
+      | hintoptions[1]        | 0               |
+      | hintshownumcorrect[0] | 0               |
+      | hintshownumcorrect[1] | 1               |
+      | shownumcorrect        | 1               |
     And I press "id_submitbutton"
     Then I should see "Edited Ordering"
+    And I choose "Edit question" action for "Edited Ordering" in the question bank
+    And the following fields match these values:
+      | id_shownumcorrect       | 1 |
+      | id_hintshownumcorrect_0 | 0 |
+      | id_hintoptions_0        | 1 |
+      | id_hintshownumcorrect_1 | 1 |
+      | id_hintoptions_1        | 0 |
 
   @javascript @_switch_window
   Scenario: Editing an ordering question and making sure the form does not allow duplication of draggables

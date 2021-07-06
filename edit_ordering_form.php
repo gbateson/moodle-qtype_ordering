@@ -147,10 +147,10 @@ class qtype_ordering_edit_form extends question_edit_form {
         $this->adjust_html_editors($mform, $name);
 
         // Adding feedback fields (=Combined feedback).
-        $this->add_combined_feedback_fields(false);
+        $this->add_combined_feedback_fields(true);
 
         // Adding interactive settings (=Multiple tries).
-        $this->add_interactive_settings(false, false);
+        $this->add_interactive_settings(false, true);
     }
 
     /**
@@ -287,6 +287,39 @@ class qtype_ordering_edit_form extends question_edit_form {
     }
 
     /**
+     * Create the form elements required by one hint.
+     *
+     * @param string $withclearwrong Whether this quesiton type uses the 'Clear wrong' option on hints.
+     * @param string $withshownumpartscorrect Whether this quesiton type uses the 'Show num parts correct' option on hints.
+     * @return array Form field elements for one hint.
+     */
+    protected function get_hint_fields($withclearwrong = false, $withshownumpartscorrect = false) {
+        $mform = $this->_form;
+
+        $repeated = [];
+        $repeated[] = $mform->createElement('editor', 'hint', get_string('hintn', 'question'),
+            ['rows' => 5], $this->editoroptions);
+        $repeatedoptions['hint']['type'] = PARAM_RAW;
+
+        $optionelements = [];
+
+        if ($withshownumpartscorrect) {
+            $optionelements[] = $mform->createElement('advcheckbox', 'hintshownumcorrect', '',
+                get_string('shownumpartscorrect', 'question'));
+        }
+
+        $optionelements[] = $mform->createElement('advcheckbox', 'hintoptions', '',
+            get_string('highlightresponse', 'qtype_ordering'));
+
+        if (count($optionelements)) {
+            $repeated[] = $mform->createElement('group', 'hintoptions',
+                get_string('hintnoptions', 'question'), $optionelements, null, false);
+        }
+
+        return [$repeated, $repeatedoptions];
+    }
+
+    /**
      * Perform an preprocessing needed on the data passed to {@link set_data()}
      * before it is used to initialise the form.
      * @param object $question the data being passed to the form.
@@ -298,9 +331,9 @@ class qtype_ordering_edit_form extends question_edit_form {
         $question = $this->data_preprocessing_answers($question, true);
 
         // Preprocess feedback.
-        $question = $this->data_preprocessing_combined_feedback($question);
+        $question = $this->data_preprocessing_combined_feedback($question, true);
 
-        $question = $this->data_preprocessing_hints($question, false, false);
+        $question = $this->data_preprocessing_hints($question, false, true);
 
         // Preprocess answers and fractions.
         $question->answer     = array();
@@ -353,6 +386,28 @@ class qtype_ordering_edit_form extends question_edit_form {
             } else {
                 $question->$name = $this->get_my_default_value($name, $default);
             }
+        }
+
+        return $question;
+    }
+
+    /**
+     * Perform the necessary preprocessing for the hint fields.
+     *
+     * @param object $question The data being passed to the form.
+     * @param bool $withclearwrong Clear wrong hints.
+     * @param bool $withshownumpartscorrect Show number correct.
+     * @return object The modified data.
+     */
+    protected function data_preprocessing_hints($question, $withclearwrong = false, $withshownumpartscorrect = false) {
+        if (empty($question->hints)) {
+            return $question;
+        }
+        parent::data_preprocessing_hints($question, $withclearwrong, $withshownumpartscorrect);
+
+        $question->hintoptions = [];
+        foreach ($question->hints as $hint) {
+            $question->hintoptions[] = $hint->options;
         }
 
         return $question;

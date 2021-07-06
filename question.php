@@ -560,7 +560,8 @@ class qtype_ordering_question extends question_graded_automatically {
                     'incorrectfeedback' => '',
                     'incorrectfeedbackformat' => FORMAT_MOODLE,
                     'partiallycorrectfeedback' => '',
-                    'partiallycorrectfeedbackformat' => FORMAT_MOODLE
+                    'partiallycorrectfeedbackformat' => FORMAT_MOODLE,
+                    'shownumcorrect' => FORMAT_MOODLE
                 );
                 $this->options->id = $DB->insert_record('qtype_ordering_options', $this->options);
             }
@@ -860,5 +861,169 @@ class qtype_ordering_question extends question_graded_automatically {
                         'iii'  => get_string('numberingstyleiii',  $plugin),
                         'IIII'  => get_string('numberingstyleIIII',  $plugin));
         return self::get_types($styles, $style);
+    }
+
+    /**
+     * Return the number of subparts of this response that are correct|partial|incorrect.
+     *
+     * @param array $response A response.
+     * @return array Array of three elements: the number of correct subparts,
+     * the number of partial correct subparts and the number of incorrect subparts.
+     */
+    public function get_num_parts_right(array $response) {
+        $this->update_current_response($response);
+        $options = $this->get_ordering_options();
+        $gradingtype = $options->gradingtype;
+
+        $numright = 0;
+        $numpartial = 0;
+        $numincorrect = 0;
+        list($correctresponse, $currentresponse) = $this->get_response_depend_on_grading_type($gradingtype);
+
+        foreach ($this->currentresponse as $position => $answerid) {
+            $fraction = $this->get_fraction_of_item($position, $answerid, $correctresponse, $currentresponse);
+            if (is_null($fraction)) {
+                continue;
+            }
+
+            if ($fraction > 0.999999) {
+                $numright++;
+            } else if ($fraction < 0.000001) {
+                $numincorrect++;
+            } else {
+                $numpartial++;
+            }
+        }
+
+        return [$numright, $numpartial, $numincorrect];
+    }
+
+    /**
+     * Returns the grade for one item, base on the fraction scale.
+     *
+     * @param int $position The position of the current response.
+     * @param int $answerid The answerid of the current response.
+     * @param array $correctresponse The correct response list base on grading type.
+     * @param array $currentresponse The current response list base on grading type.
+     * @return float|null Float if the grade, base on the fraction scale and null if the item is not in the correct response.
+     */
+    protected function get_fraction_of_item(int $position, int $answerid, array $correctresponse, array $currentresponse) {
+        $options = $this->get_ordering_options();
+        $gradingtype = $options->gradingtype;
+
+        $score    = 0;
+        $maxscore = null;
+
+        switch ($gradingtype) {
+            case self::GRADING_ALL_OR_NOTHING:
+            case self::GRADING_ABSOLUTE_POSITION:
+                if (isset($correctresponse[$position])) {
+                    if ($correctresponse[$position] == $answerid) {
+                        $score = 1;
+                    }
+                    $maxscore = 1;
+                }
+                break;
+            case self::GRADING_RELATIVE_NEXT_EXCLUDE_LAST:
+            case self::GRADING_RELATIVE_NEXT_INCLUDE_LAST:
+                if (isset($correctresponse[$answerid])) {
+                    if (isset($currentresponse[$answerid]) && $currentresponse[$answerid] == $correctresponse[$answerid]) {
+                        $score = 1;
+                    }
+                    $maxscore = 1;
+                }
+                break;
+
+            case self::GRADING_RELATIVE_ONE_PREVIOUS_AND_NEXT:
+            case self::GRADING_RELATIVE_ALL_PREVIOUS_AND_NEXT:
+                if (isset($correctresponse[$answerid])) {
+                    $maxscore = 0;
+                    $prev = $correctresponse[$answerid]->prev;
+                    $maxscore += count($prev);
+                    $prev = array_intersect($prev, $currentresponse[$answerid]->prev);
+                    $score += count($prev);
+                    $next = $correctresponse[$answerid]->next;
+                    $maxscore += count($next);
+                    $next = array_intersect($next, $currentresponse[$answerid]->next);
+                    $score += count($next);
+                }
+                break;
+
+            case self::GRADING_LONGEST_ORDERED_SUBSET:
+            case self::GRADING_LONGEST_CONTIGUOUS_SUBSET:
+                if (isset($correctresponse[$position])) {
+                    if (isset($currentresponse[$position])) {
+                        $score = $currentresponse[$position];
+                    }
+                    $maxscore = 1;
+                }
+                break;
+
+            case self::GRADING_RELATIVE_TO_CORRECT:
+                if (isset($correctresponse[$position])) {
+                    $maxscore = (count($correctresponse) - 1);
+                    $answerid = $currentresponse[$position];
+                    $correctposition = array_search($answerid, $correctresponse);
+                    $score = ($maxscore - abs($correctposition - $position));
+                    if ($score < 0) {
+                        $score = 0;
+                    }
+                }
+                break;
+        }
+        $fraction = $maxscore ? $score / $maxscore : $maxscore;
+
+        return $fraction;
+    }
+
+    /**
+     * Get correcresponse and currentinfo depending on grading type.
+     *
+     * @param string $gradingtype The kind of grading.
+     * @return array Correctresponse and currentresponsescore in one array.
+     */
+    protected function get_response_depend_on_grading_type(string $gradingtype): array {
+
+        $correctresponse = [];
+        $currentresponse = [];
+        switch ($gradingtype) {
+            case self::GRADING_ALL_OR_NOTHING:
+            case self::GRADING_ABSOLUTE_POSITION:
+            case self::GRADING_RELATIVE_TO_CORRECT:
+                $correctresponse = $this->correctresponse;
+                $currentresponse = $this->currentresponse;
+                break;
+
+            case self::GRADING_RELATIVE_NEXT_EXCLUDE_LAST:
+            case self::GRADING_RELATIVE_NEXT_INCLUDE_LAST:
+                $lastitem = ($gradingtype == self::GRADING_RELATIVE_NEXT_INCLUDE_LAST);
+                $correctresponse = $this->get_next_answerids($this->correctresponse, $lastitem);
+                $currentresponse = $this->get_next_answerids($this->currentresponse, $lastitem);
+                break;
+
+            case self::GRADING_RELATIVE_ONE_PREVIOUS_AND_NEXT:
+            case self::GRADING_RELATIVE_ALL_PREVIOUS_AND_NEXT:
+                $all = ($gradingtype == self::GRADING_RELATIVE_ALL_PREVIOUS_AND_NEXT);
+                $correctresponse = $this->get_previous_and_next_answerids($this->correctresponse, $all);
+                $currentresponse = $this->get_previous_and_next_answerids($this->currentresponse, $all);
+                break;
+
+            case self::GRADING_LONGEST_ORDERED_SUBSET:
+            case self::GRADING_LONGEST_CONTIGUOUS_SUBSET:
+                $correctresponse = $this->correctresponse;
+                $currentresponse = $this->currentresponse;
+                $contiguous = ($gradingtype == self::GRADING_LONGEST_CONTIGUOUS_SUBSET);
+                $subset = $this->get_ordered_subset($contiguous);
+                foreach ($currentresponse as $position => $answerid) {
+                    if (array_search($position, $subset) === false) {
+                        $currentresponse[$position] = 0;
+                    } else {
+                        $currentresponse[$position] = 1;
+                    }
+                }
+                break;
+        }
+
+        return [$correctresponse, $currentresponse];
     }
 }
