@@ -417,4 +417,20 @@ class qtype_ordering_question_test extends advanced_testcase {
 
         $this->assertEquals($expected, $classifiedresponse, '', 0.0000005);
     }
+
+    /**
+     * Test get number of correct|partial|incorrect on response.
+     */
+    public function test_get_num_parts_right() {
+        // Create a Ordering question.
+        $question = test_question_maker::make_question('ordering');
+
+        $question->options->gradingtype = qtype_ordering_question::GRADING_RELATIVE_TO_CORRECT;
+        $question->start_attempt(new question_attempt_pending_step(), 1);
+
+        $response = $this->get_response($question, ['Dynamic', 'Modular', 'Object', 'Oriented', 'Learning', 'Environment']);
+        $numparts = $question->get_num_parts_right($response);
+
+        $this->assertEquals([2, 4, 0], $numparts);
+    }
 }

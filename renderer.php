@@ -93,6 +93,11 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
             $sortablelist .= ' notactive';
         }
 
+        // In the multi-tries, the highlight response base on the hint highlight option.
+        if (isset($options->highlightresponse) && $options->highlightresponse) {
+            $sortablelist .= ' notactive';
+        }
+
         // Initialise JavaScript if not in readonly mode
         if ($options->readonly) {
             // Items cannot be dragged in readonly mode.
@@ -148,6 +153,12 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
                         break;
                 }
 
+                if (isset($options->highlightresponse) && $options->highlightresponse) {
+                    $score = $this->get_ordering_item_score($question, $position, $answerid);
+                    list($score, $maxscore, $fraction, $percent, $class, $img) = $score;
+                    $class = trim("$sortableitem $class");
+                }
+
                 // Format the answer text.
                 $answer = $question->answers[$answerid];
                 $answertext = $question->format_text($answer->answer, $answer->answerformat,
@@ -179,18 +190,63 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
     }
 
     /**
-     * Generate the specific feedback. This is feedback that varies according to
-     * the response the student gave.
+     * Generate the display of the outcome part of the question. This is the
+     * area that contains the various forms of feedback. This function generates
+     * the content of this area belonging to the question type.
      *
-     * @param question_attempt $qa the question attempt to display.
+     * @param question_attempt $qa The question attempt to display.
+     * @param question_display_options $options Controls what should and should not be displayed.
      * @return string HTML fragment.
      */
-    public function specific_feedback(question_attempt $qa) {
+    public function feedback(question_attempt $qa, question_display_options $options) {
+        $output = '';
+        $hint = null;
 
-        if ($feedback = $this->combined_feedback($qa)) {
-            $feedback = html_writer::tag('p', $feedback);
+        $isshownumpartscorrect = true;
+
+        if ($options->feedback) {
+            $output .= html_writer::nonempty_tag('div', $this->specific_feedback($qa),
+                array('class' => 'specificfeedback'));
+
+            if ($options->numpartscorrect) {
+                $output .= html_writer::nonempty_tag('div', $this->num_parts_correct($qa),
+                    array('class' => 'numpartscorrect'));
+                $isshownumpartscorrect = false;
+            }
+
+            $output .= $this->specific_grade_detail_feedback($qa);
+            $hint = $qa->get_applicable_hint();
         }
 
+        if ($options->numpartscorrect && $isshownumpartscorrect) {
+            $output .= html_writer::nonempty_tag('div', $this->num_parts_correct($qa),
+                array('class' => 'numpartscorrect'));
+        }
+
+        if ($hint) {
+            $output .= $this->hint($qa, $hint);
+        }
+
+        if ($options->generalfeedback) {
+            $output .= html_writer::nonempty_tag('div', $this->general_feedback($qa),
+                array('class' => 'generalfeedback'));
+        }
+
+        if ($options->rightanswer) {
+            $output .= html_writer::nonempty_tag('div', $this->correct_response($qa),
+                array('class' => 'rightanswer'));
+        }
+
+        return $output;
+    }
+
+    /**
+     * Display the grade detail of the response.
+     *
+     * @param question_attempt $qa The question attempt to display.
+     * @return string Output grade detail of the response.
+     */
+    public function specific_grade_detail_feedback(question_attempt $qa): string {
         $gradingtype = '';
         $gradedetails = '';
         $scoredetails = '';
@@ -270,7 +326,18 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
             }
         }
 
-        return $feedback.$gradingtype.$gradedetails.$scoredetails;
+        return $gradingtype.$gradedetails.$scoredetails;
+    }
+
+    /**
+     * Generate the specific feedback. This is feedback that varies according to
+     * the response the student gave.
+     *
+     * @param question_attempt $qa The question attempt to display.
+     * @return string HTML fragment.
+     */
+    public function specific_feedback(question_attempt $qa) {
+        return $this->combined_feedback($qa);
     }
 
     /**
@@ -516,5 +583,37 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
             $this->allcorrect = ($this->correctinfo == $this->currentinfo);
         }
         return $this->allcorrect;
+    }
+
+    /**
+     * Gereate a brief statement of how many sub-parts of this question the
+     * student got correct|partial|incorrect.
+     *
+     * @param question_attempt $qa The question attempt to display.
+     * @return string HTML fragment.
+     */
+    protected function num_parts_correct(question_attempt $qa) {
+        $a = new stdClass();
+        $output = '';
+
+        list($a->numright, $a->numpartial, $a->numincorrect) = $qa->get_question()->get_num_parts_right(
+            $qa->get_last_qt_data());
+
+        if ($a->numright) {
+            $a->numrightplural = get_string($a->numright > 1 ? 'itemplural' : 'itemsingular', 'qtype_ordering');
+            $output .= html_writer::nonempty_tag('div', get_string('yougotnright', 'qtype_ordering', $a));
+        }
+
+        if ($a->numpartial) {
+            $a->numpartialplural = get_string($a->numpartial > 1 ? 'itemplural' : 'itemsingular', 'qtype_ordering');
+            $output .= html_writer::nonempty_tag('div', get_string('yougotnpartial', 'qtype_ordering', $a));
+        }
+
+        if ($a->numincorrect) {
+            $a->numincorrectplural = get_string($a->numincorrect > 1 ? 'itemplural' : 'itemsingular', 'qtype_ordering');
+            $output .= html_writer::nonempty_tag('div', get_string('yougotnincorrect', 'qtype_ordering', $a));
+        }
+
+        return $output;
     }
 }

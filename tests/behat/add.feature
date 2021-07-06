@@ -35,4 +35,7 @@ Feature: Test creating an Ordering question
       | For any incorrect response         | Your answer is incorrect         |
       | Hint 1                             | This is your first hint          |
       | Hint 2                             | This is your second hint         |
+      | hintoptions[0]                     | 1                                |
+      | hintshownumcorrect[1]              | 1                                |
+      | shownumcorrect                     | 1                                |
     Then I should see "Ordering-001"
