@@ -43,3 +43,8 @@ Feature: Test duplicating a quiz containing a Ordering question
       | For any correct response           | Well done!                                                                    |
       | For any partially correct response | Parts, but only parts, of your response are correct.                          |
       | For any incorrect response         | That is not right at all.                                                     |
+      | id_shownumcorrect                  | 1                                                                             |
+      | id_hintshownumcorrect_0            | 1                                                                             |
+      | id_hintoptions_0                   | 1                                                                             |
+      | id_hintshownumcorrect_1            | 1                                                                             |
+      | id_hintoptions_1                   | 1                                                                             |

@@ -71,6 +71,9 @@ class restore_qtype_ordering_plugin extends restore_qtype_plugin {
         // and create a mapping from the $oldid to the $newid.
         if ($this->get_mappingid('question_created', $oldquestionid)) {
             $data->questionid = $newquestionid;
+            if (!isset($data->shownumcorrect)) {
+                $data->shownumcorrect = 1;
+            }
             $newid = $DB->insert_record('qtype_ordering_options', $data);
             $this->set_mapping('qtype_ordering_options', $oldid, $newid);
         }

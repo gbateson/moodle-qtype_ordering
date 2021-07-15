@@ -68,7 +68,11 @@ $string['gradingtype_help'] = 'Choose the type of grading calculation.
 **Longest contiguous subset**
 : The grade is the number of items in the longest contiguous subset of items. The highest possible grade is the same as the number of items displayed. A subset must have at least two items. Subsets do not need to start at the first item (but they can) and they MUST BE CONTIGUOUS. Where there are multiple subsets of equal length, items in the subset that is found first, when searching from left to right, will be displayed as correct. Other items will be marked as incorrect.';
 
+$string['highlightresponse'] = 'Highlight response as correct or incorrect';
 $string['horizontal'] = 'Horizontal';
+
+$string['itemplural'] = 'items';
+$string['itemsingular'] = 'item';
 
 $string['layouttype_help'] = 'Choose whether to display the items vertically or horizontally.';
 $string['layouttype'] = 'Layout of items';
@@ -118,3 +122,6 @@ $string['showgrading'] = 'Grading details';
 $string['showgrading_help'] = 'Choose whether to show or hide details of the score calculation when a student reviews a response to this Ordering question.';
 
 $string['vertical'] = 'Vertical';
+$string['yougotnright'] = 'You have {$a->numright} {$a->numrightplural} correct.';
+$string['yougotnpartial'] = 'You have {$a->numpartial} {$a->numpartialplural} partially correct.';
+$string['yougotnincorrect'] = 'You have {$a->numincorrect} {$a->numincorrectplural} incorrect.';
