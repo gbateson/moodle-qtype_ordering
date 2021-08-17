@@ -308,7 +308,7 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
         if ($showcorrect) {
             $sortableitem = $question->get_ordering_layoutclass();
             $output .= html_writer::tag('p', get_string('correctorder', 'qtype_ordering'));
-            $output .= html_writer::start_tag('ol', array('class' => 'correctorder'));
+            $output .= html_writer::start_tag('ol', array('class' => 'correctorder ' . $sortableitem));
             $correctresponse = $question->correctresponse;
             foreach ($correctresponse as $position => $answerid) {
                 $answer = $question->answers[$answerid];
