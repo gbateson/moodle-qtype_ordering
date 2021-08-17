@@ -62,8 +62,9 @@
     list-style-type  : upper-roman;
 }
 
-.que.ordering .sortablelist.horizontal li {
-    float            : left;
+.que.ordering .sortablelist.horizontal {
+    display: flex;
+    flex-wrap: wrap;
 }
 
 /* Better define 'row' of item for horizontal list. */
@@ -133,15 +134,20 @@
 .que.ordering div.rightanswer {
     overflow: auto;
 }
+.que.ordering div.rightanswer ol.correctorder {
+    padding-inline-start: 16px;
+}
+.que.ordering div.rightanswer ol.correctorder.horizontal {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+}
 .que.ordering div.rightanswer ol.correctorder li.horizontal {
-    float            : left;
     margin-left      : 24px;
     margin-right     : 24px;
 }
-.que.ordering div.rightanswer ol.correctorder li.horizontal:first-child {
-    margin-left      : 0;
-}
 .que.ordering div.rightanswer ol.correctorder li.vertical {
+    margin-left: 24px;
 }
 
 /* the width restriction can be limited to editors for draggable items
