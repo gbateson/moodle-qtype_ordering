@@ -19,7 +19,7 @@ Feature: Test importing Ordering questions
 
   @javascript @_file_upload
   Scenario: import Matching question.
-    When I navigate to "Question bank > Import" in current page administration
+    When I am on the "Course 1" "core_question > course question import" page logged in as teacher1
     And I set the field "id_format_xml" to "1"
     And I upload "question/type/ordering/tests/fixtures/testquestion.moodle.xml" file to "Import" filemanager
     And I press "id_submitbutton"

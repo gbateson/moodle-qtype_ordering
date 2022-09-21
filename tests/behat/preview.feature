@@ -20,14 +20,10 @@ Feature: Preview an Ordering question
     And the following "questions" exist:
       | questioncategory | qtype    | name         | template | layouttype |
       | Test questions   | ordering | ordering-001 | moodle   | 0          |
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Question bank" in current page administration
 
   @javascript @_switch_window
   Scenario: Preview an Ordering question and submit a correct response.
-    When I choose "Preview" action for "ordering-001" in the question bank
-    And I switch to "questionpreview" window
+    When I am on the "ordering-001" "core_question > preview" page logged in as teacher1
     And I set the field "How questions behave" to "Immediate feedback"
     And I press "Start again with these options"
     # The test was unreliable unless if an item randomly started in the right place.

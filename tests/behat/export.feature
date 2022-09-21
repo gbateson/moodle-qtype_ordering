@@ -20,12 +20,9 @@ Feature: Test exporting Ordering questions
     And the following "questions" exist:
       | questioncategory | qtype    | name   | template |
       | Test questions   | ordering | Moodle | moodle |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
 
-  @javascript
   Scenario: Export a Matching question
-    When I navigate to "Question bank > Export" in current page administration
+    When I am on the "Course 1" "core_question > course question export" page logged in as teacher1
     And I set the field "id_format_xml" to "1"
     And I press "Export questions to file"
     Then following "click here" should download between "1700" and "1950" bytes
