@@ -22,8 +22,13 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace qtype_ordering;
 
 use qtype_ordering\question_hint_ordering;
+use test_question_maker;
+use question_state;
+use question_pattern_expectation;
+use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
@@ -38,8 +43,9 @@ require_once($CFG->dirroot . '/question/type/ddwtos/tests/helper.php');
  *
  * @copyright 2018 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers    \qtype_ordering
  */
-class qtype_ordering_walkthrough_test extends qbehaviour_walkthrough_test_base {
+class walkthrough_test extends \qbehaviour_walkthrough_test_base {
 
     /**
      * Get the array of post data that will .

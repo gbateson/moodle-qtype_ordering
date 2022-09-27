@@ -20,15 +20,12 @@ Feature: Test editing an Ordering question
     And the following "questions" exist:
       | questioncategory | qtype    | name                 | template |
       | Test questions   | ordering | Ordering for editing | moodle   |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Question bank" in current page administration
 
-  @javascript @_switch_window
+  @javascript
   Scenario: Edit an Ordering question
-    When I choose "Edit question" action for "Ordering for editing" in the question bank
+    When I am on the "Ordering for editing" "core_question > edit" page logged in as teacher1
     And I set the following fields to these values:
-      | Question name ||
+      | Question name | |
     And I press "id_submitbutton"
     Then I should see "You must supply a value here."
     When I set the following fields to these values:
@@ -48,9 +45,9 @@ Feature: Test editing an Ordering question
       | id_hintshownumcorrect_1 | 1 |
       | id_hintoptions_1        | 0 |
 
-  @javascript @_switch_window
+  @javascript
   Scenario: Editing an ordering question and making sure the form does not allow duplication of draggables
-    When I choose "Edit question" action for "Ordering for editing" in the question bank
+    When I am on the "Ordering for editing" "core_question > edit" page logged in as teacher1
     And I set the following fields to these values:
       | Draggable item 4 | Object |
     And I press "id_submitbutton"

@@ -2,6 +2,9 @@
 Change log for qtype_ordering
 ========================================
 
+2022-09-27 (07)
+ - This version works with Moodle 4.0.
+
 2022-07-08 (06)
  - optimize code to ensure that recorded responses are no longer than 100 bytes.
 

@@ -439,7 +439,7 @@ class qtype_ordering_edit_form extends question_edit_form {
                     $item = str_replace('{no}', $i + 1, $item);
                     $item = html_writer::link("#id_answerheader_$i", $item);
                     $a = (object)array('text' => $answer, 'item' => $item);
-                    $errors["answer[$answercount]"] =  get_string('duplicatesnotallowed', $plugin, $a);
+                    $errors["answer[$answercount]"] = get_string('duplicatesnotallowed', $plugin, $a);
                 } else {
                     $answers[] = $answer;
                 }
@@ -482,14 +482,14 @@ class qtype_ordering_edit_form extends question_edit_form {
      *
      * @param string $name Item name
      * @param string|mixed|null $value
-     * @return boolean (usually TRUE, unless there is an error) 
+     * @return boolean (usually TRUE, unless there is an error)
      */
     protected function set_my_default_value($name, $value) {
         if (method_exists($this, 'set_default_value')) {
-            // This method doesn't exist yet, but it might one day ;-)
+            // This method doesn't exist yet, but it might one day ;-).
             return $this->set_default_value($name, $value);
         } else {
-            // Until at least Moodle <= 4.0, we expect to come this way
+            // Until at least Moodle <= 4.0, we expect to come this way.
             $name = $this->get_my_preference_name($name);
             return set_user_preferences(array($name => $value));
         }
@@ -504,10 +504,10 @@ class qtype_ordering_edit_form extends question_edit_form {
      */
     protected function get_my_default_value($name, $default) {
         if (method_exists($this, 'get_default_value')) {
-            // Moodle >= 3.10
+            // Moodle >= 3.10.
             return $this->get_default_value($name, $default);
         } else {
-            // Moodle <= 3.9
+            // Moodle <= 3.9.
             $name = $this->get_my_preference_name($name);
             return get_user_preferences($name, $default);
         }

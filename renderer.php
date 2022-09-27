@@ -23,7 +23,6 @@
  */
 
 // Prevent direct access to this script.
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Generates the output for ordering questions
@@ -56,7 +55,7 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
      * @return string HTML fragment.
      */
     public function formulation_and_controls(question_attempt $qa, question_display_options $options) {
-        global $CFG, $DB, $PAGE;
+        global $CFG, $DB;
 
         // Initialize the return result.
         $result = '';
@@ -82,7 +81,7 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
         // Set CSS classes for sortable list and sortable items.
         $sortablelist = 'sortablelist';
         if ($class = $question->get_ordering_layoutclass()) {
-            $sortablelist .= ' '.$class; // "vertical" or "horizontal"
+            $sortablelist .= ' '.$class; // Vertical or Horizontal.
         }
         if ($class = $question->options->numberingstyle) {
             $sortablelist .= ' numbering'.$class;
@@ -98,14 +97,14 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
             $sortablelist .= ' notactive';
         }
 
-        // Initialise JavaScript if not in readonly mode
+        // Initialise JavaScript if not in readonly mode.
         if ($options->readonly) {
             // Items cannot be dragged in readonly mode.
             $sortableitem = '';
         } else {
             $sortableitem = 'sortableitem';
             $params = array($sortableid, $responseid);
-            $PAGE->requires->js_call_amd('qtype_ordering/reorder', 'init', $params);
+            $this->page->requires->js_call_amd('qtype_ordering/reorder', 'init', $params);
         }
 
         $result .= html_writer::tag('div', $question->format_questiontext($qa), array('class' => 'qtext'));
@@ -135,7 +134,7 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
                 }
 
                 // Set the CSS class and correctness img for this response.
-                // (correctness: HIDDEN=0, VISIBLE=1, EDITABLE=2)
+                // (correctness: HIDDEN=0, VISIBLE=1, EDITABLE=2).
                 switch ($options->correctness) {
                     case question_display_options::VISIBLE:
                         $score = $this->get_ordering_item_score($question, $position, $answerid);

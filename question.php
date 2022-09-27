@@ -24,7 +24,6 @@
  */
 
 // Prevent direct access to this script.
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Represents an ordering question.
@@ -280,7 +279,7 @@ class qtype_ordering_question extends question_graded_automatically {
 
             $classifiedresponse[$subqid] = new question_classified_response(
                 $currentposition + 1,
-                get_string('positionx', 'qtype_ordering', $currentposition + 1), 
+                get_string('positionx', 'qtype_ordering', $currentposition + 1),
                 ($currentposition == $position) * $fraction
             );
         }
@@ -469,10 +468,8 @@ class qtype_ordering_question extends question_graded_automatically {
         return parent::check_file_access($qa, $options, $component, $filearea, $args, $forcedownload);
     }
 
-    ///////////////////////////////////////////////////////
-    // methods from "question_graded_automatically" class
-    // see "question/type/questionbase.php"
-    ///////////////////////////////////////////////////////
+    // Methods from "question_graded_automatically" class.
+    // See "question/type/questionbase.php".
 
     /**
      * Check a request for access to a file belonging to a combined feedback field.
@@ -502,9 +499,7 @@ class qtype_ordering_question extends question_graded_automatically {
         }
     }
 
-    ///////////////////////////////////////////////////////
-    // Custom methods
-    ///////////////////////////////////////////////////////
+    // Custom methods.
 
     /**
      * Returns response mform field name
@@ -782,7 +777,7 @@ class qtype_ordering_question extends question_graded_automatically {
      * @param int $type
      * @return array|string array if $type is not specified and single string if $type is specified
      */
-    static public function get_types($types, $type) {
+    public static function get_types($types, $type) {
         if ($type === null) {
             return $types; // Return all $types.
         }
@@ -798,7 +793,7 @@ class qtype_ordering_question extends question_graded_automatically {
      * @param int $type
      * @return array|string array if $type is not specified and single string if $type is specified
      */
-    static public function get_select_types($type=null) {
+    public static function get_select_types($type=null) {
         $plugin = 'qtype_ordering';
         $types = array(
             self::SELECT_ALL        => get_string('selectall',        $plugin),
@@ -814,7 +809,7 @@ class qtype_ordering_question extends question_graded_automatically {
      * @param int $type
      * @return array|string array if $type is not specified and single string if $type is specified
      */
-    static public function get_layout_types($type=null) {
+    public static function get_layout_types($type=null) {
         $plugin = 'qtype_ordering';
         $types = array(
             self::LAYOUT_VERTICAL   => get_string('vertical',   $plugin),
@@ -829,7 +824,7 @@ class qtype_ordering_question extends question_graded_automatically {
      * @param int $type
      * @return array|string array if $type is not specified and single string if $type is specified
      */
-    static public function get_grading_types($type=null) {
+    public static function get_grading_types($type=null) {
         $plugin = 'qtype_ordering';
         $types = array(
             self::GRADING_ALL_OR_NOTHING                 => get_string('allornothing',               $plugin),

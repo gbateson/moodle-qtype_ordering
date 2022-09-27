@@ -23,6 +23,14 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace qtype_ordering;
+
+use test_question_maker;
+use question_attempt_pending_step;
+use question_state;
+use qtype_ordering_question;
+use question_attempt_step;
+use question_classified_response;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -34,8 +42,9 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  *
  * @copyright 2018 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers  \qtype_ordering_question
  */
-class qtype_ordering_question_test extends advanced_testcase {
+class question_test extends \advanced_testcase {
     /**
      * Array of draggable items in correct order.
      */

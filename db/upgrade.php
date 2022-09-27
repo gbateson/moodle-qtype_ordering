@@ -22,8 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Upgrade code for the ordering question type.
  *
@@ -275,6 +273,7 @@ function xmldb_qtype_ordering_upgrade($oldversion) {
                     case 'III':
                         $DB->set_field($table, $field, 'IIII', array('id' => $option->id));
                         break;
+                    // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
                     // Ignore "abc", "iii", and anything else.
                 }
             }
