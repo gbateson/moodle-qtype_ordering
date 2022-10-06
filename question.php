@@ -84,7 +84,7 @@ class qtype_ordering_question extends question_graded_automatically {
     /** @var array Records from "question_answers" table */
     public $answers;
 
-    /** @var array Records from "qtype_ordering_options" table */
+    /** @var stdClass Records from "qtype_ordering_options" table */
     public $options;
 
     /** @var array of answerids in correct order */
@@ -110,18 +110,15 @@ class qtype_ordering_question extends question_graded_automatically {
      *      1 and {@link get_num_variants()} inclusive.
      */
     public function start_attempt(question_attempt_step $step, $variant) {
-        $answers = $this->get_ordering_answers();
-        $options = $this->get_ordering_options();
-
-        $countanswers = count($answers);
+        $countanswers = count($this->answers);
 
         // Sanitize "selecttype".
-        $selecttype = $options->selecttype;
+        $selecttype = $this->options->selecttype;
         $selecttype = max(0, $selecttype);
         $selecttype = min(2, $selecttype);
 
         // Sanitize "selectcount".
-        $selectcount = $options->selectcount;
+        $selectcount = $this->options->selectcount;
         $selectcount = max(3, $selectcount);
         $selectcount = min($countanswers, $selectcount);
 
@@ -138,15 +135,15 @@ class qtype_ordering_question extends question_graded_automatically {
         // Extract answer ids.
         switch ($selecttype) {
             case self::SELECT_ALL:
-                $answerids = array_keys($answers);
+                $answerids = array_keys($this->answers);
                 break;
 
             case self::SELECT_RANDOM:
-                $answerids = array_rand($answers, $selectcount);
+                $answerids = array_rand($this->answers, $selectcount);
                 break;
 
             case self::SELECT_CONTIGUOUS:
-                $answerids = array_keys($answers);
+                $answerids = array_keys($this->answers);
                 $offset = mt_rand(0, $countanswers - $selectcount);
                 $answerids = array_slice($answerids, $offset, $selectcount);
                 break;
@@ -174,10 +171,45 @@ class qtype_ordering_question extends question_graded_automatically {
      *      being loaded.
      */
     public function apply_attempt_state(question_attempt_step $step) {
-        $answers = $this->get_ordering_answers();
-        $options = $this->get_ordering_options();
         $this->currentresponse = array_filter(explode(',', $step->get_qt_var('_currentresponse')));
         $this->correctresponse = array_filter(explode(',', $step->get_qt_var('_correctresponse')));
+    }
+
+    public function validate_can_regrade_with_other_version(question_definition $otherversion): ?string {
+        $basemessage = parent::validate_can_regrade_with_other_version($otherversion);
+        if ($basemessage) {
+            return $basemessage;
+        }
+
+        if (count($this->answers) != count($otherversion->answers)) {
+            return get_string('regradeissuenumitemschanged', 'qtype_ordering');
+        }
+
+        return null;
+    }
+
+    public function update_attempt_state_data_for_new_version(
+            question_attempt_step $oldstep, question_definition $otherversion) {
+        parent::update_attempt_state_data_for_new_version($oldstep, $otherversion);
+
+        $mapping = array_combine(array_keys($otherversion->answers), array_keys($this->answers));
+
+        $oldorder = explode(',', $oldstep->get_qt_var('_currentresponse'));
+        $neworder = [];
+        foreach ($oldorder as $oldid) {
+            $neworder[] = $mapping[$oldid] ?? $oldid;
+        }
+
+        $oldcorrect = explode(',', $oldstep->get_qt_var('_correctresponse'));
+        $newcorrect = [];
+        foreach ($oldcorrect as $oldid) {
+            $newcorrect[] = $mapping[$oldid] ?? $oldid;
+        }
+
+        return [
+                '_currentresponse' => implode(',', $neworder),
+                '_correctresponse' => implode(',', $newcorrect),
+            ];
     }
 
     /**
@@ -354,8 +386,7 @@ class qtype_ordering_question extends question_graded_automatically {
         $countcorrect = 0;
         $countanswers = 0;
 
-        $options = $this->get_ordering_options();
-        $gradingtype = $options->gradingtype;
+        $gradingtype = $this->options->gradingtype;
         switch ($gradingtype) {
 
             case self::GRADING_ALL_OR_NOTHING:
@@ -533,70 +564,12 @@ class qtype_ordering_question extends question_graded_automatically {
     }
 
     /**
-     * Loads from DB and returns options for question instance
-     *
-     * @return object
-     */
-    public function get_ordering_options() {
-        global $DB;
-        if ($this->options === null) {
-            $this->options = $DB->get_record('qtype_ordering_options', array('questionid' => $this->id));
-            if (empty($this->options)) {
-                $this->options = (object)array(
-                    'questionid' => $this->id,
-                    'layouttype' => self::LAYOUT_VERTICAL,
-                    'selecttype' => self::SELECT_ALL,
-                    'selectcount' => 0,
-                    'gradingtype' => self::GRADING_ABSOLUTE_POSITION,
-                    'showgrading' => 1,
-                    'numberingstyle' => self::NUMBERING_STYLE_DEFAULT,
-                    'correctfeedback' => '',
-                    'correctfeedbackformat' => FORMAT_MOODLE,
-                    'incorrectfeedback' => '',
-                    'incorrectfeedbackformat' => FORMAT_MOODLE,
-                    'partiallycorrectfeedback' => '',
-                    'partiallycorrectfeedbackformat' => FORMAT_MOODLE,
-                    'shownumcorrect' => FORMAT_MOODLE
-                );
-                $this->options->id = $DB->insert_record('qtype_ordering_options', $this->options);
-            }
-        }
-        return $this->options;
-    }
-
-    /**
-     * Loads from DB and returns array of answers objects
-     *
-     * @return array of objects
-     */
-    public function get_ordering_answers() {
-        global $CFG, $DB;
-        if ($this->answers === null) {
-            $this->answers = $DB->get_records('question_answers', array('question' => $this->id), 'fraction,id');
-            if ($this->answers) {
-                if (isset($CFG->passwordsaltmain)) {
-                    $salt = $CFG->passwordsaltmain;
-                } else {
-                    $salt = '';
-                }
-                foreach ($this->answers as $answerid => $answer) {
-                    $this->answers[$answerid]->md5key = 'ordering_item_'.md5($salt.$answer->answer);
-                }
-            } else {
-                $this->answers = array();
-            }
-        }
-        return $this->answers;
-    }
-
-    /**
      * Returns layoutclass
      *
      * @return string
      */
     public function get_ordering_layoutclass() {
-        $options = $this->get_ordering_options();
-        switch ($options->layouttype) {
+        switch ($this->options->layouttype) {
             case self::LAYOUT_VERTICAL:
                 return 'vertical';
             case self::LAYOUT_HORIZONTAL:
@@ -867,8 +840,7 @@ class qtype_ordering_question extends question_graded_automatically {
      */
     public function get_num_parts_right(array $response) {
         $this->update_current_response($response);
-        $options = $this->get_ordering_options();
-        $gradingtype = $options->gradingtype;
+        $gradingtype = $this->options->gradingtype;
 
         $numright = 0;
         $numpartial = 0;
@@ -903,8 +875,7 @@ class qtype_ordering_question extends question_graded_automatically {
      * @return float|null Float if the grade, base on the fraction scale and null if the item is not in the correct response.
      */
     protected function get_fraction_of_item(int $position, int $answerid, array $correctresponse, array $currentresponse) {
-        $options = $this->get_ordering_options();
-        $gradingtype = $options->gradingtype;
+        $gradingtype = $this->options->gradingtype;
 
         $score    = 0;
         $maxscore = null;

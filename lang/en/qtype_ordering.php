@@ -102,6 +102,7 @@ $string['pluginnameediting'] = 'Editing an Ordering question';
 $string['pluginnamesummary'] = 'Put jumbled items into a meaningful order.';
 $string['privacy:metadata'] = 'The ordering question type plugin does not store any personal data.';
 
+$string['regradeissuenumitemschanged'] = 'The number of draggable items has changed.';
 $string['relativeallpreviousandnext'] = 'Relative to ALL the previous and next items';
 $string['relativenextexcludelast'] = 'Relative to the next item (excluding last)';
 $string['relativenextincludelast'] = 'Relative to the next item (including last)';

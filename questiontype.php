@@ -39,7 +39,7 @@ class qtype_ordering extends question_type {
     public $feedbackfields = array('correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback');
 
     /**
-     * @return whether the question_answers.answer field needs to have
+     * @return bool whether the question_answers.answer field needs to have
      * restore_decode_content_links_worker called on it.
      */
     public function has_html_answers() {
@@ -66,7 +66,19 @@ class qtype_ordering extends question_type {
      * @param object $questiondata the question data loaded from the database.
      */
     protected function initialise_question_instance(question_definition $question, $questiondata) {
+        global $CFG;
+
         parent::initialise_question_instance($question, $questiondata);
+
+        $question->answers = $questiondata->options->answers;
+        foreach ($question->answers as $answerid => $answer) {
+            $question->answers[$answerid]->md5key =
+                    'ordering_item_' . md5(($CFG->passwordsaltmain ?? '') . $answer->answer);
+        }
+
+        $question->options = clone($questiondata->options);
+        unset($question->options->answers);
+
         $this->initialise_combined_feedback($question, $questiondata, true);
     }
 
@@ -415,9 +427,10 @@ class qtype_ordering extends question_type {
             return false;
         }
 
-        // Load the answers - "fraction" is used to signify the order of the answers.
+        // Load the answers - "fraction" is used to signify the order of the answers,
+        // with id as a tie-break which should not be required.
         if (!$question->options->answers = $DB->get_records('question_answers',
-                array('question' => $question->id), 'fraction ASC')) {
+                array('question' => $question->id), 'fraction, id')) {
             echo $OUTPUT->notification('Error: Missing question answers for ordering question ' . $question->id . '!');
             return false;
         }

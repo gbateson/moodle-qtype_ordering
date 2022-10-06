@@ -30,4 +30,4 @@ $plugin->component = 'qtype_ordering';
 $plugin->maturity  = MATURITY_STABLE;
 $plugin->requires  = 2021051700; // Moodle 3.11.
 $plugin->version   = 2022092700;
-$plugin->release   = '2022-09-27 (07)+';
+$plugin->release   = '2022-09-27 (07)';
