@@ -27,17 +27,10 @@ Feature: Preview an Ordering question
     And I expand all fieldsets
     And I set the field "How questions behave" to "Immediate feedback"
     And I press "Start again with these options"
-    # The test was unreliable unless if an item randomly started in the right place.
-    # So we first moved each item to the last place, before putting it into the right place.
-    And I drag "Modular" to space "6" in the ordering question
     And I drag "Modular" to space "1" in the ordering question
-    And I drag "Object" to space "6" in the ordering question
     And I drag "Object" to space "2" in the ordering question
-    And I drag "Oriented" to space "6" in the ordering question
     And I drag "Oriented" to space "3" in the ordering question
-    And I drag "Dynamic" to space "6" in the ordering question
     And I drag "Dynamic" to space "4" in the ordering question
-    And I drag "Learning" to space "6" in the ordering question
     And I drag "Learning" to space "5" in the ordering question
     And I press "Submit and finish"
     Then the state of "Put these words in order." question is shown as "Correct"
@@ -50,7 +43,6 @@ Feature: Preview an Ordering question
     And I set the field "How questions behave" to "Immediate feedback"
     And I press "Start again with these options"
     And I drag "Modular" to space "1" in the ordering question
-    And I drag "Object" to space "6" in the ordering question
     And I drag "Oriented" to space "4" in the ordering question
     And I drag "Dynamic" to space "3" in the ordering question
     And I drag "Learning" to space "5" in the ordering question
@@ -71,7 +63,6 @@ Feature: Preview an Ordering question
     And I set the field "How questions behave" to "Immediate feedback"
     And I press "Start again with these options"
     And I drag "Modular" to space "1" in the ordering question
-    And I drag "Object" to space "6" in the ordering question
     And I drag "Oriented" to space "4" in the ordering question
     And I drag "Dynamic" to space "3" in the ordering question
     And I drag "Learning" to space "5" in the ordering question
