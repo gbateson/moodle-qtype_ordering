@@ -105,12 +105,12 @@ define([
      * @param {Object} config As above.
      */
     return function(config) {
-        var dragStart = null,       // Information about when and where the drag started.
-            originalOrder = null,   // Array of ids.
-            itemDragging = null,    // Item being moved by dragging (jQuery object).
-            itemMoving = null,      // Item being moved using the accessible modal (jQuery object).
-            proxy = null,           // Drag proxy (jQuery object).
-            orderList = null;       // Order list (jQuery object).
+        var dragStart = null, // Information about when and where the drag started.
+            originalOrder = null, // Array of ids.
+            itemDragging = null, // Item being moved by dragging (jQuery object).
+            itemMoving = null, // Item being moved using the accessible modal (jQuery object).
+            proxy = null, // Drag proxy (jQuery object).
+            orderList = null; // Order list (jQuery object).
 
         var startDrag = function(event, details) {
             orderList = $(config.list);
@@ -186,7 +186,6 @@ define([
             var items = list.find('li');
             var count = items.length;
             for (var i = 0; i < count; ++i) {
-                // proxy.css('margin-left', '20p');
                 if (itemDragging[0] === items[i]) {
                     proxy.find('li').attr('value', i + 1);
                     break;
@@ -305,7 +304,9 @@ define([
          */
         var getCurrentOrder = function() {
             return (itemDragging || itemMoving).closest(config.list).find(config.item).map(
-                    function(index, item) { return config.idGetter(item); }).get();
+                    function(index, item) {
+                        return config.idGetter(item);
+                    }).get();
         };
 
         /**
@@ -317,7 +318,9 @@ define([
          */
         var arrayEquals = function(a1, a2) {
             return a1.length === a2.length &&
-                a1.every(function(v, i) { return v === a2[i]; });
+                a1.every(function(v, i) {
+                    return v === a2[i];
+                });
         };
         config.itemInPage = combineSelectors(config.list, config.item);
 
