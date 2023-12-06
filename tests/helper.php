@@ -48,7 +48,6 @@ class qtype_ordering_test_helper extends question_test_helper {
     public function make_ordering_question_moodle() {
         question_bank::load_question_definition_classes('ordering');
         $q = new qtype_ordering_question();
-        $q->questionid = $q->id;
         test_question_maker::initialise_a_question($q);
         $q->qtype = question_bank::get_qtype('ordering');
         $q->name = 'Moodle';

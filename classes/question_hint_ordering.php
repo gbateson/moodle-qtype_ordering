@@ -74,14 +74,4 @@ class question_hint_ordering extends question_hint_with_parts {
         return new question_hint_ordering($row->id, $row->hint, $row->hintformat,
             $row->shownumcorrect, $row->clearwrong, $row->options);
     }
-
-    /**
-     * Adjust this display options according to the hint settings.
-     *
-     * @param question_display_options $options
-     */
-    public function adjust_display_options(question_display_options $options) {
-        parent::adjust_display_options($options);
-        $options->highlightresponse = $this->highlightresponse;
-    }
 }

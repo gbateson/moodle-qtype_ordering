@@ -93,7 +93,12 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
         }
 
         // In the multi-tries, the highlight response base on the hint highlight option.
-        if (isset($options->highlightresponse) && $options->highlightresponse) {
+        $hint = null;
+        if (method_exists($qa->get_behaviour(), 'get_applicable_hint')) {
+            /** @var \qtype_ordering\question_hint_ordering $hint */
+            $hint = $qa->get_behaviour()->get_applicable_hint();
+        }
+        if ($hint && $hint->highlightresponse) {
             $sortablelist .= ' notactive';
         }
 
@@ -152,7 +157,7 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
                         break;
                 }
 
-                if (isset($options->highlightresponse) && $options->highlightresponse) {
+                if ($hint && $hint->highlightresponse) {
                     $score = $this->get_ordering_item_score($question, $position, $answerid);
                     list($score, $maxscore, $fraction, $percent, $class, $img) = $score;
                     $class = trim("$sortableitem $class");
